@@ -15,8 +15,8 @@ const getRandomQuestion = (topic) => { //topic - a theme from array of questions
     return questions[questionTopic][randomQuestionIndex]; //return the question from the array
 };
 
-const getCorrectAnswer = (topic, id) => {
-    const question = questions[topic].find(
+const getCorrectAnswer = (topic, id) => {    
+    const question = questions[topic].find(        
         (question) => question.id === id
     );
 
@@ -28,6 +28,18 @@ const getCorrectAnswer = (topic, id) => {
     return question.options.find((option) => option.isCorrect).text;//if the question has options, find the option with isCorrect = true and return it
 };
 
+const getQuestionById = (id) => {
+    for (const topic in questions) { //for each topic in questions
+        const question = questions[topic].find((q) => q.id === id); //find the question by id
+
+        if (question) { //if the question is found
+            return question; //return the question
+        }
+    }
+
+    return null; //if the question is not found, return null
+};
 
 
-module.exports = {getRandomQuestion, getCorrectAnswer};//need to export function to use it in index.js
+
+module.exports = {getRandomQuestion, getCorrectAnswer, getQuestionById, getTopicId};//need to export function to use it in index.js

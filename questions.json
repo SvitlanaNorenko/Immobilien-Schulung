@@ -1,5 +1,5 @@
 {
-  "immobilienarten": [
+  "1": [
     {
       "id": 1,
       "text": "Welche Arten von Immobilien kennen Sie?",
@@ -36,7 +36,7 @@
     }
     
   ],
-  "technische verwaltung": [
+  "2": [
     {
       "id": 1,
       "text": "Was versteht man unter technischer Verwaltung einer Immobilie?",
@@ -90,7 +90,7 @@
       ]
     }
   ],
-  "buchhaltung": [
+  "3": [
     {
       "id": 1,
       "text": "Was versteht man unter Buchhaltung in der Immobilienverwaltung?",
@@ -149,7 +149,7 @@
       ]
     }
   ],
-  "immobilienbewertung": [
+  "4": [
     {
       "id": 1,
       "text": "Welche Kriterien sind für die Bewertung einer Immobilie relevant?",
@@ -185,7 +185,7 @@
       "answer": "Das Baujahr beeinflusst: Den technischen Zustand (z.B. Bausubstanz, Leitungen), Die Energieeffizienz (ältere Gebäude haben oft schlechtere Dämmung), Den Wert (neuere oder sanierte Immobilien sind meist höher bewertet), Die Notwendigkeit von Instandhaltungen oder Sanierungen"
     }
   ],
-  "kaufmännische verwaltung": [
+  "5": [
     {
       "id": 1,
       "text": "Was ist richtig, was ist falsch? 3 Antworten sind richtig. \nDie kaufmännische Verwaltung ist verantwortlich für die Erstellung von Mietverträgen und Baubeschreibungen.",
@@ -242,7 +242,7 @@
       "answer": "Kontrolle des Zahlungseingangs, Mahnwesen (1. Mahnung, 2. Mahnung), ggf. Einleitung rechtlicher Schritte (z.B. Inkasso, Kündigung), Information an Eigentümergemeinschaft oder Vermieter, Dokumentation aller Schritte in der Objektbuchhaltung"
     }
   ],
-  "mietverwaltung und mietrecht": [
+  "6": [
     {"id": 1,
       "text": "Was versteht man unter Mietverwaltung?",
       "hasOptions": false,
@@ -320,7 +320,7 @@
       ]
     }
   ],
-  "gewerbeimmobilien": [
+  "7": [
     {
       "id": 1,
       "text": "Was versteht man unter einer Gewerbeimmobilie?",
@@ -410,7 +410,7 @@
       ]
     }
   ],
-  "weg verwaltung": [
+  "8": [
     {"id": 1,
       "text": "Was bedeutet WEG-Verwaltung?",
       "hasOptions": false,
