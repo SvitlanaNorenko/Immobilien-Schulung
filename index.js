@@ -28,7 +28,7 @@ bot.hears([
     //const topicId = ctx.message.text.getTopicId();
     const topic = ctx.message.text.toLowerCase(); //to create a var to topic 
     const question = getRandomQuestion(topic); //to get a random question from the topic
-    const topicId = getTopicId(topicId);
+    const topicId = getTopicId(topicId); //get the topic id from the topic name
 
     if (!question) {
         await ctx.reply('Es wurde keine Frage gefunden.');

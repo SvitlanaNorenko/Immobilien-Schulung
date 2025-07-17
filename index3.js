@@ -13,6 +13,7 @@ bot.command('start',async (ctx) => {
         .row().text('Buchhaltung').text('Immobilienbewertung')
         .row().text('Kaufmännische Verwaltung').text('Mietverwaltung und Mietrecht')
         .row().text('Gewerbeimmobilien').text('WEG Verwaltung')
+        .row().text('Random Frage')
         .resized();
     await ctx.reply('Hallo! Ich bin ein Immobilien Schulung Bot 🤖 \nIch helfe dir die Immobilienbranche zu verstehen und lernen');
     await ctx.reply('Wo möchtest Du beginnen?👇', {reply_markup: startKeyboard})
@@ -23,10 +24,11 @@ bot.hears([
     'Immobilienarten', 'Technische Verwaltung',
     'Buchhaltung', 'Immobilienbewertung',
     'Kaufmännische Verwaltung', 'Mietverwaltung und Mietrecht',
-    'Gewerbeimmobilien', 'WEG Verwaltung'
+    'Gewerbeimmobilien', 'WEG Verwaltung',
+    'Random Frage'
 ], async (ctx) => {
     const topic = ctx.message.text.toLowerCase(); //to create a var to topic 
-    const question = getRandomQuestion(topic); //to get a random question from the topic
+    const {question, questionTopic} = getRandomQuestion(topic); //to get a random question from the topic
    
     let inlineKeyboard; //to create a new inline keyboard
 
@@ -35,8 +37,8 @@ bot.hears([
           InlineKeyboard.text(
             option.text, 
             JSON.stringify({
-            //type: `${topic}-option`,
-            //isCorrect: option.isCorrect,
+            type: `${questionTopic}-option`,
+            isCorrect: option.isCorrect,
             questionId: question.id,
             optionId: option.id, 
           })
@@ -49,7 +51,7 @@ bot.hears([
         inlineKeyboard = new InlineKeyboard()
         .text('die Antwort bekommen', 
       JSON.stringify({
-          type: topic,
+          type: questionTopic,
           questionId: question.id,
         }),
       ); 
@@ -67,13 +69,31 @@ bot.hears([
 bot.on('callback_query:data', async (ctx) => {
   const callbackData = JSON.parse(ctx.callbackQuery.data);
 
-  // Кейс, если вопрос без вариантов (только ответ)
+  // if the the question has no variants, only 1 answer 
+  //if(!callbackData.type.includes('option')) {
+
+ // }
+
+ // if(!callbackData.type || !callbackData.optionId.includes('option')) {
+
+  //}
+
   if (callbackData.type === undefined && callbackData.optionId === undefined) {
     const answer = getCorrectAnswer(callbackData.type, callbackData.questionId);
     await ctx.reply(answer);
     await ctx.answerCallbackQuery();
     return;
   }
+
+  //if(callbackData.isCorrect) {
+   // await ctx.reply("Richtig! 🎉");
+    //await ctx.answerCallbackQuery();
+    //return;
+  //}
+
+  //const answer = getCorrectAnswer(callbackData.type.split('-')[0], callbackData.questionId);
+  //await ctx.reply(`Falsch! 😢 Die richtige Antwort ist: ${answer}`);
+  //await ctx.answerCallbackQuery();
 
   const { questionId, optionId } = callbackData;
   const question = getQuestionById(questionId); 

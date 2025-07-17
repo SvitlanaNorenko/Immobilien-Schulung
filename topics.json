@@ -1,0 +1,36 @@
+{
+    "topics": [
+        {
+        "name": "Immobilienarten",
+        "id": 1
+        },
+        {
+        "name": "Technische Verwaltung",
+        "id": 2
+        },
+        {
+        "name": "Buchhaltung",
+        "id": 3
+        },
+        {
+        "name": "Immobilienbewertung",
+        "id": 4
+        },
+        {
+        "name": "Kaufmännische Verwaltung",
+        "id": 5
+        },
+        {
+        "name": "Mietverwaltung und Mietrecht",
+        "id": 6
+        },
+        {
+        "name": "Gewerbeimmobilien",
+        "id": 7
+        },
+        {
+        "name": "WEG Verwaltung",
+        "id": 8
+        }
+    ]
+}
