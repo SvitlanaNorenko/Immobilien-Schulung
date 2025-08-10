@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index3.js"
+    "start": "nodemon index4.js"
   },
   "dependencies": {
     "dotenv": "^16.5.0",

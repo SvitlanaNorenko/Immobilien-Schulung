@@ -1,9 +1,9 @@
-require('dotenv').config();
-const {Bot, Keyboard, InlineKeyboard, GrammyError, HttpError} = require('grammy');
+require('dotenv').config(); //include dotenv library to use var - env and read this file
+const {Bot, Keyboard, InlineKeyboard, GrammyError, HttpError} = require('grammy'); //import necessary classes from grammy library
 //inlineKeyboard appears under message
-const {getRandomQuestion, getCorrectAnswer, getQuestionById, getQuestionById2, getCorrectAnswer2} = require('./utils'); //to import the functions
+const {getRandomQuestion, getCorrectAnswer, getQuestionById,} = require('./utils1'); //to import the functions
 
-const bot = new Bot(process.env.BOT_API_KEY);
+const bot = new Bot(process.env.BOT_API_KEY); //create a new bot with the API key from .env file
 
 //bot.command - to process the command /start
 //ctx - context, contains information about the message, user, chat, etc.
@@ -27,7 +27,7 @@ bot.hears([
     'Gewerbeimmobilien', 'WEG Verwaltung',
     'Random Frage'
 ], async (ctx) => {
-    const topic = ctx.message.text.toLowerCase(); //to create a var to topic 
+    const topic = ctx.message.text.toLowerCase().trim();
     const {question, topicId} = getRandomQuestion(topic); //to get a random question from the topic
    
     let inlineKeyboard; //to create a new inline keyboard
@@ -35,26 +35,23 @@ bot.hears([
       if (question.hasOptions) {
         inlineKeyboard = new InlineKeyboard();
         //if the question has options, create an inline keyboard with buttons for each option
-        question.options.forEach((option) =>            //the result will come back to result array - buttonRows
+        question.options.forEach((option) =>            
           inlineKeyboard.text(
             option.text, 
             JSON.stringify({
-            // isCorrect: option.isCorrect,
             topicId: topicId,
             questionId: question.id,
             optionId: option.id, 
           })
         ).row()
       );
-
-      // inlineKeyboard = InlineKeyboard.from([buttonRows]) //create a keyboard with answer variants
-
+      
       } else { //if the question has no options, create a button to get the answer
         inlineKeyboard = new InlineKeyboard()
         .text('die Antwort bekommen', 
-      JSON.stringify({
-          questionId: question.id,
-          topicId: topicId,
+        JSON.stringify({
+        topicId: topicId,
+        questionId: question.id,
         }),
       ); 
       }
@@ -64,54 +61,36 @@ bot.hears([
     }); 
 });
 
-//bot.on - reaction to any messages or to media messages
-//processing the answer to the question
+// bot.on - reaction to any messages or to media messages
+// processing the answer to the question
 bot.on('callback_query:data', async (ctx) => {
   const callbackData = JSON.parse(ctx.callbackQuery.data);
-  const { questionId, optionId, topicId } = callbackData;
+  const { questionId, topicId, optionId } = callbackData;
 
-  if (!optionId) {
-    const answer = getCorrectAnswer2(callbackData.topicId, callbackData.questionId);
+  if (!optionId) { //if the question has no options
+    const answer = getCorrectAnswer(callbackData.topicId, callbackData.questionId);
     await ctx.reply(answer);
-    await ctx.answerCallbackQuery();
+    await ctx.answerCallbackQuery(); 
     return;
   }
-  
-  // if the the question has no variants, only 1 answer 
-  //if(!callbackData.type.includes('option')) {
-
- // }
-
- // if(!callbackData.type || !callbackData.optionId.includes('option')) {
-
-  //}
-  //if(callbackData.isCorrect) {
-   // await ctx.reply("Richtig! 🎉");
-    //await ctx.answerCallbackQuery();
-    //return;
-  //}
-
-  //const answer = getCorrectAnswer(callbackData.type.split('-')[0], callbackData.questionId);
-  //await ctx.reply(`Falsch! 😢 Die richtige Antwort ist: ${answer}`);
-  //await ctx.answerCallbackQuery();
-
-  const question = getQuestionById2(topicId).find((q) => q.id === questionId); //find the question by id in the topic
+    
+    const question = getQuestionById(topicId).find((q) => q.id === questionId); //check urself if u have written a question
   if (!question) {
     await ctx.reply("Frage nicht gefunden.");
     await ctx.answerCallbackQuery();
     return;
   }
 
-  if (!Array.isArray(question.options)) {
+  if (!Array.isArray(question.options)) { //if the question has no options
   await ctx.reply("Antwortmöglichkeiten nicht gefunden.");
   await ctx.answerCallbackQuery();
   return;
 }
 
-  const selectedOption = question.options.find(option => option.id === optionId);
+  const selectedOption = question.options.find(option => option.id === optionId); //to compare the right option from the question and the option that user has chosen
 
-  if (!selectedOption) {
-    await ctx.reply("Ausgewählte Option nicht gefunden.");
+  if (!selectedOption) { //to check if the program has found the option that user has chosen
+    await ctx.reply("Ausgewählte Option nicht gefunden."); 
     await ctx.answerCallbackQuery();
     return;
   }

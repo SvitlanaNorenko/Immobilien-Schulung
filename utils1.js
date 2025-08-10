@@ -6,28 +6,40 @@ const topics = require('./topics.json'); //import topics from topics.js
 const getRandomQuestion = (topic) => { //topic - a theme from array of questions, getRandomQuestion - what has user chosen
     const random = new Random(); //create a new random object
 
-    let questionTopic = topic.toLowerCase();
+    let questionTopic = topic.toLowerCase().trim();
+    let questionId;
+
     if(questionTopic === 'random frage') {
-        questionTopic = Object.keys(questions)[
-            random.integer(0, Object.keys(questions).length - 1)
-        ]
+        const allTopicsIds = Object.keys(questions);
+        questionId = allTopicsIds[random.integer(0, allTopicsIds.length - 1)];
+    } else {
+        questionId = getQuestionIdFromTopic(questionTopic);               
     }
 
-    const questionId = getQuestionIdFromTopic(questionTopic);
-    const randomQuestionIndex = getRandomInt(0, questions[questionId].length-1); //get random number from 0 to the length of the array - 1
+    const questionList = getQuestionById(questionId); 
+
+    if(!Array.isArray(questionList) || questionList.length === 0) {
+        throw new Error(`❌ Нет вопросов по теме ID "${questionId}"`);
+    }
+
+    const randomQuestionIndex = getRandomInt(0, questionList.length-1); //get random number from 0 to the length of the array - 1
 
     
     
     return {
-        question: getQuestionById(questionId)[randomQuestionIndex],
+        question: questionList[randomQuestionIndex],
         topicId: questionId,//return the question from the array
     }
-}
+};
 
 
 
 function getQuestionIdFromTopic(topic) {
-//     topic = topic.toLowerCase(); //convert topic to lowercase
+    topic = topic.toLowerCase().trim();
+    if (!topics.hasOwnProperty(topic)) {
+        console.log("Ошибка! Ключа нет:", topic, Object.keys(topics));
+        throw new Error(`❌ Тема "${topic}" не найдена в topics.json`);
+    }
     return String(topics[topic]);
 }
 
@@ -49,10 +61,6 @@ function getCorrectAnswer(topicId, questionId) {
     return question.options.find((option) => option.isCorrect).text;
 
 }
-
-
-
-
 
 function getQuestionById(topicId) {
     return questions[topicId];
