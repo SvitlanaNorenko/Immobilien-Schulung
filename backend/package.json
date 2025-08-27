@@ -11,6 +11,7 @@
     "start": "nodemon src/index4.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.56.0",
     "dotenv": "^16.5.0",
     "grammy": "^1.36.3",
     "nodemon": "^3.1.10",
