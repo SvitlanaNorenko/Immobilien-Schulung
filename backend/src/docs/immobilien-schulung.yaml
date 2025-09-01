@@ -1,0 +1,329 @@
+openapi: 3.0.3
+info:
+  title: Immobilien Schulung API
+  version: 1.0.0
+  description: |
+    Simple API for managing **topics** and **questions**.
+    No pagination, no search. Uses Supabase in controllers.
+
+servers:
+  - url: http://localhost:3000
+    description: Local dev
+
+tags:
+  - name: Topics
+  - name: Questions
+
+paths:
+  /topics:
+    get:
+      tags: [Topics]
+      summary: Get all topics
+      operationId: getTopics
+      responses:
+        "200":
+          description: List of topics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Topic"
+              examples:
+                sample:
+                  value:
+                    - id: 1
+                      name: "Basics"
+                    - id: 2
+                      name: "Advanced"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+    post:
+      tags: [Topics]
+      summary: Create a topic
+      operationId: createTopic
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTopicInput"
+            examples:
+              sample:
+                value:
+                  name: "New Topic"
+      responses:
+        "201":
+          description: Created topic
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Topic"
+              examples:
+                sample:
+                  value:
+                    id: 3
+                    name: "New Topic"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /topics/{id}:
+    delete:
+      tags: [Topics]
+      summary: Delete a topic by ID
+      operationId: deleteTopic
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          description: Deleted topic payload
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted:
+                    type: boolean
+                    example: true
+                  topic:
+                    $ref: "#/components/schemas/Topic"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /questions:
+    get:
+      tags: [Questions]
+      summary: Get all questions
+      operationId: getAllQuestions
+      responses:
+        "200":
+          description: List of questions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Question"
+              examples:
+                sample:
+                  value:
+                    - id: 1
+                      text: "What is the capital of Germany?"
+                      answer: "Berlin"
+                      options: ["Berlin", "Munich", "Hamburg"]
+                    - id: 2
+                      text: "2 + 2 = ?"
+                      answer: "4"
+                      options: ["3", "4", "5"]
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+    post:
+      tags: [Questions]
+      summary: Create a question
+      operationId: createQuestion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateQuestionInput"
+            examples:
+              sample:
+                value:
+                  text: "What is the capital of Germany?"
+                  answer: "Berlin"
+                  options: ["Berlin", "Munich", "Hamburg", "Frankfurt"]
+      responses:
+        "201":
+          description: Created question
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Question"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /questions/{id}:
+    get:
+      tags: [Questions]
+      summary: Get a question by ID
+      operationId: getQuestionById
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          description: A single question
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Question"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+    delete:
+      tags: [Questions]
+      summary: Delete a question by ID
+      operationId: deleteQuestion
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "200":
+          description: Deleted question payload
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted:
+                    type: boolean
+                  question:
+                    $ref: "#/components/schemas/Question"
+              examples:
+                sample:
+                  value:
+                    deleted: true
+                    question:
+                      id: 1
+                      text: "What is the capital of Germany?"
+                      answer: "Berlin"
+                      options: ["Berlin", "Munich", "Hamburg", "Frankfurt"]
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+components:
+  parameters:
+    IdParam:
+      name: id
+      in: path
+      required: true
+      description: Numeric identifier
+      schema:
+        type: integer
+        minimum: 1
+        example: 1
+
+  schemas:
+    Topic:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Basics"
+      required: [id, name]
+
+    CreateTopicInput:
+      type: object
+      properties:
+        name:
+          type: string
+      required: [name]
+      example:
+        name: "New Topic"
+
+    Question:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        text:
+          type: string
+          example: "What is the capital of Germany?"
+        answer:
+          type: string
+          example: "Berlin"
+        options:
+          type: array
+          items:
+            type: string
+          example: ["Berlin", "Munich", "Hamburg", "Frankfurt"]
+      required: [id, text, answer, options]
+
+    CreateQuestionInput:
+      type: object
+      properties:
+        text:
+          type: string
+        answer:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+      required: [text, answer, options]
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      example:
+        error: "Something went wrong"
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          examples:
+            example:
+              value:
+                error: "Valid numeric 'id' is required"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          examples:
+            example:
+              value:
+                error: "Not found"
+
+    Conflict:
+      description: Conflict (e.g., duplicate name)
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          examples:
+            example:
+              value:
+                error: "Topic with this name already exists"
+
+    ServerError:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          examples:
+            example:
+              value:
+                error: "Failed to fetch"
