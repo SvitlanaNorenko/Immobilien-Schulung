@@ -16,7 +16,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/topics", topicsRouter);
-app.use("/topics", questionsRouter);
+
+app.use("/questions", questionsRouter);
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiDoc));
 

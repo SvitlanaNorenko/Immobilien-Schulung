@@ -5,7 +5,7 @@ import supabase from "../../supabaseClient.js";
  * GET /questions
  * Returns all questions (no pagination or filtering)
  */
-export async function getAllQuestions(_req, res) {
+export async function getAllQuestions(req, res) {
   const { data, error } = await supabase
     .from("questions")
     .select("*")
@@ -15,6 +15,7 @@ export async function getAllQuestions(_req, res) {
     return res.status(500).json({ error: "Failed to fetch questions" });
   }
 
+  // if data return data else return empty array []
   res.json(data ?? []);
 }
 
@@ -36,7 +37,7 @@ export async function getQuestionById(req, res) {
     .single();
 
   if (error) {
-    // Supabase .single() throws a 406 error when no rows are found
+    // If we don't fidn the question
     if (error.code === "PGRST116") {
       return res.status(404).json({ error: "Question not found" });
     }

@@ -3,7 +3,7 @@ import { createTopic, deleteTopic, getTopics } from "./functions.js";
 
 const topicsRouter = Router();
 
-// GET all Topics
+// GET all Topics GET /topics/
 topicsRouter.get("/", getTopics);
 
 // POST create a Topic
