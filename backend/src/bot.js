@@ -46,7 +46,14 @@ export async function initializeBot() {
   bot.hears(topicNames, async (ctx) => {
     const userId = ctx.from.id;
     const topic = ctx.message.text;
-    const { question, topicId } = await getNextQuestion(userId, topic); //to the next question for the topic
+    const nextQuestion = await getNextQuestion(userId, topic); //to the next question for the topic
+
+    if (!nextQuestion) {
+      await ctx.reply("Du hast alle Fragen geantwortet!");
+      return;
+    }
+
+    const { question, topicId } = nextQuestion;
 
     let inlineKeyboard; //to create a new inline keyboard
 
@@ -98,8 +105,19 @@ export async function initializeBot() {
     const question = await getQuestionById(callbackData.questionId);
     const { isCorrect, answer } = getQuestionAnswer(question, optionId);
     const showHiddenAnswer = !question.hasOptions;
-    // TOD homework
-    saveAnswer(question, topicId, telegramId, optionId);
+    const questionAlreadyAnswered = await saveAnswer(
+      question,
+      topicId,
+      telegramId,
+      optionId
+    );
+
+    if (questionAlreadyAnswered) {
+      console.log("questionAlreadyAnswered", questionAlreadyAnswered);
+      await ctx.reply("Die Antwort ist schon gegeben");
+      await ctx.answerCallbackQuery();
+      return;
+    }
 
     // Show hidden answer when there are no options to pick from
     if (showHiddenAnswer) {

@@ -1,9 +1,14 @@
 import supabase from "./supabaseClient.js";
 
-async function createUser(userId, name) {
+async function createUser(telegramId, name) {
   const { error } = await supabase
     .from("users")
-    .insert({ telegram_id: userId, name });
+    .insert({ telegram_id: telegramId, name });
+
+  if (error.code === "23505") {
+    await supabase.from("users").update({ name }).eq("telegram_id", telegramId);
+    return;
+  }
 
   if (error) {
     console.error("Error creating user:", error);
@@ -13,7 +18,7 @@ async function createUser(userId, name) {
 async function getNextQuestion(userId, topic) {
   const { id: topicId } = await getTopicId(topic);
   const lastAnswer = await getLastAnswer(userId, topicId);
-  const lastAnswerQuestionId = lastAnswer?.id || 0;
+  const lastAnswerQuestionId = lastAnswer?.question_id || 0;
 
   // Get the next question for the topic
   const { data: question, error } = await supabase
@@ -29,6 +34,7 @@ async function getNextQuestion(userId, topic) {
     console.error("Error fetching next question:", error);
     return null;
   }
+
   return { question, topicId };
 }
 
@@ -81,7 +87,59 @@ async function getQuestionById(questionId) {
 // Fields to save: everything except id, created_at
 // telegram_id will take teh value of userId
 // https://supabase.com/dashboard/project/uddwvhkgbecwaerhcbil/editor/17310?schema=public
-async function saveAnswer(question, topicId, userId) {}
+async function saveAnswer(question, topicId, telegramId, optionId) {
+  const answer = getUserAnswer(optionId, question);
+  const user = await getUserByTelegramId(telegramId);
+  const { error } = await supabase.from("answers").insert({
+    telegram_id: telegramId,
+    question_id: question.id,
+    topic_id: topicId,
+    isCorrect: answer.isCorrect,
+    user_id: user.id,
+    answer: answer.text,
+  });
+
+  if (error) {
+    if (error.code === "23505") {
+      // If the question is already answered, we don't want to save the answer again or make any changes
+      return true;
+    }
+    console.error("Error saving answer:", error);
+  }
+
+  const correctAnswersCount = answer.isCorrect
+    ? user.correct_answers_count + 1 //to increase the correct answers count (total) if the user answer is correct
+    : user.correct_answers_count; //to keep the correct answers count (total) if the user answer is wrong
+
+  await supabase
+    .from("users")
+    .update({
+      questions_answered_count: user.questions_answered_count + 1,
+      correct_answers_count: correctAnswersCount,
+      last_question_id: question.id,
+    })
+    .eq("id", user.id);
+
+  return false;
+}
+
+async function getUserByTelegramId(telegramId) {
+  const { data: user } = await supabase
+    .from("users")
+    .select("*")
+    .eq("telegram_id", telegramId)
+    .single();
+
+  return user;
+}
+
+function getUserAnswer(optionId, question) {
+  if (question.hasOptions) {
+    return question.options.find((_, index) => optionId === index);
+  }
+
+  return { text: question.answer, isCorrect: true };
+}
 
 async function fetchTopicsWithQuestions() {
   const { data, error } = await supabase
