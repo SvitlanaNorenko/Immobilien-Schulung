@@ -133,9 +133,45 @@ async function getQuestionById(questionId) {
 // Home work: Try to finish this
 // Finish this function to save the answer in supabase
 // Fields to save: everything except id, created_at
-// telegram_id will take teh value of userId
+// telegram_id will take teh value of telegram user id
 // https://supabase.com/dashboard/project/uddwvhkgbecwaerhcbil/editor/17310?schema=public
-async function saveAnswer(question, topicId, userId) {}
+async function saveAnswer(question, topicId, telegramId, optionId) {
+  const answer = getUserAnswer(optionId, question);
+  const user = await getUserByTelegramId(telegramId)
+  const { error } = await supabase
+    .from("answers")
+    .insert({
+      telegram_id: telegramId,
+      question_id: question.id,
+      topic_id: topicId,
+      isCorrect: answer.isCorrect,
+      user_id: user.id,
+      answer: answer.text,
+    });
+    
+  if (error) {
+    console.error("Error saving answer:", error);
+  }
+}
+
+async function getUserByTelegramId(telegramId) {
+  const {data: user} = await supabase
+    .from("users")
+    .select("*")
+    .eq("telegram_id", telegramId)
+    .single();
+
+    return(user)
+}
+
+
+function getUserAnswer(optionId, question) {
+  if (question.hasOptions) {
+    return question.options.find((_, index) => optionId === index);
+  }
+
+  return { text: question.answer, isCorrect: true };
+}
 
 async function fetchTopicsWithQuestions() {
   const { data, error } = await supabase

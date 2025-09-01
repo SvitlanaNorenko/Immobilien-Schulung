@@ -18,8 +18,9 @@ const {
 } = require("./utils1"); //to import the functions
 const bot = new Bot(process.env.BOT_API_KEY); //create a new bot with the API key from .env file
 
-async function initializeBot() {  //what is the difference between startBot here and down and why index4.js is almost empty, why all info is here now?? 
-  const topicsWithQuestions = await fetchTopicsWithQuestions();//fetch topics with questions from the database
+async function initializeBot() {
+  //what is the difference between startBot here and down and why index4.js is almost empty, why all info is here now??
+  const topicsWithQuestions = await fetchTopicsWithQuestions(); //fetch topics with questions from the database
   const topicNames = topicsWithQuestions.map((topic) => topic.name);
 
   //bot.command - to process the command /start
@@ -92,7 +93,7 @@ async function initializeBot() {  //what is the difference between startBot here
   // processing the answer to the question
   bot.on("callback_query:data", async (ctx) => {
     const callbackData = JSON.parse(ctx.callbackQuery.data);
-    const userId = ctx.from.id;
+    const telegramId = ctx.from.id;
     const { questionId, topicId, optionId } = callbackData;
 
     if (!questionId) {
@@ -105,7 +106,7 @@ async function initializeBot() {  //what is the difference between startBot here
     const { isCorrect, answer } = getQuestionAnswer(question, optionId);
     const showHiddenAnswer = !question.hasOptions;
     // TOD homework
-    saveAnswer(question, topicId, userId);
+    saveAnswer(question, topicId, telegramId, optionId);
 
     // Show hidden answer when there are no options to pick from
     if (showHiddenAnswer) {
