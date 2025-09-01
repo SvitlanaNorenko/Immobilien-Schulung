@@ -4,17 +4,20 @@
   "description": "",
   "license": "ISC",
   "author": "\"Svitlana Norenko\"",
-  "type": "commonjs",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/index4.js"
+    "start": "nodemon src/index.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.56.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
+    "express": "^5.1.0",
     "grammy": "^1.36.3",
     "nodemon": "^3.1.10",
-    "random-js": "^2.1.0"
+    "swagger-ui-express": "^5.0.1",
+    "yaml": "^2.8.1"
   }
 }

@@ -1,24 +1,17 @@
-require("dotenv").config(); //include dotenv library to use var - env and read this file
-
-const {
-  Bot,
-  Keyboard,
-  InlineKeyboard,
-  GrammyError,
-  HttpError,
-} = require("grammy"); //import necessary classes from grammy library
+import { Bot, Keyboard, InlineKeyboard, GrammyError, HttpError } from "grammy"; //import necessary classes from grammy library
 //inlineKeyboard appears under message
-const {
+import {
   createUser,
   getNextQuestion,
   getQuestionById,
   fetchTopicsWithQuestions,
   saveAnswer,
   getQuestionAnswer,
-} = require("./utils1"); //to import the functions
+} from "./utils.js"; //to import the functions
+
 const bot = new Bot(process.env.BOT_API_KEY); //create a new bot with the API key from .env file
 
-async function initializeBot() {
+export async function initializeBot() {
   //what is the difference between startBot here and down and why index4.js is almost empty, why all info is here now??
   const topicsWithQuestions = await fetchTopicsWithQuestions(); //fetch topics with questions from the database
   const topicNames = topicsWithQuestions.map((topic) => topic.name);
@@ -143,5 +136,3 @@ async function initializeBot() {
 
   bot.start();
 }
-
-module.exports = { startBot: initializeBot };
