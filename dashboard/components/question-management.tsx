@@ -1,134 +1,109 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Edit, MoreHorizontal, Plus, Search, Trash2 } from "lucide-react"
-import { AddQuestionDialog } from "@/components/add-question-dialog"
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Edit, MoreHorizontal, Plus, Search, Trash2 } from "lucide-react";
+import { AddQuestionDialog } from "@/components/add-question-dialog";
 
-interface Question {
-  id: string
-  question: string
-  type: "multiple-choice" | "single-answer"
-  category: string
-  difficulty: "easy" | "medium" | "hard"
-  answers?: string[]
-  correctAnswer: string | number
-  createdAt: string
+export interface Question {
+  id: number;
+  created_at: string;
+  text: string;
+  hasOptions: boolean;
+  answer: string;
+  topics: { id: number; name: string };
+  options: { text: string; isCorrect: boolean }[];
 }
 
-// Mock data
-const mockQuestions: Question[] = [
-  {
-    id: "1",
-    question: "What is the capital of France?",
-    type: "multiple-choice",
-    category: "Geography",
-    difficulty: "easy",
-    answers: ["London", "Berlin", "Paris", "Madrid"],
-    correctAnswer: 2,
-    createdAt: "2024-01-15",
-  },
-  {
-    id: "2",
-    question: "What is 2 + 2?",
-    type: "single-answer",
-    category: "Mathematics",
-    difficulty: "easy",
-    correctAnswer: "4",
-    createdAt: "2024-01-14",
-  },
-  {
-    id: "3",
-    question: "Who wrote Romeo and Juliet?",
-    type: "multiple-choice",
-    category: "Literature",
-    difficulty: "medium",
-    answers: ["Charles Dickens", "William Shakespeare", "Jane Austen", "Mark Twain"],
-    correctAnswer: 1,
-    createdAt: "2024-01-13",
-  },
-  {
-    id: "4",
-    question: "What is the chemical symbol for gold?",
-    type: "single-answer",
-    category: "Science",
-    difficulty: "medium",
-    correctAnswer: "Au",
-    createdAt: "2024-01-12",
-  },
-  {
-    id: "5",
-    question: "Which planet is closest to the Sun?",
-    type: "multiple-choice",
-    category: "Science",
-    difficulty: "easy",
-    answers: ["Venus", "Mercury", "Earth", "Mars"],
-    correctAnswer: 1,
-    createdAt: "2024-01-11",
-  },
-]
-
-const categories = ["All Categories", "Geography", "Mathematics", "Literature", "Science", "History"]
-const difficulties = ["All Difficulties", "easy", "medium", "hard"]
+type Topics = { id: number; name: string }[];
 
 export function QuestionManagement() {
-  const [questions, setQuestions] = useState<Question[]>(mockQuestions)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("All Categories")
-  const [selectedDifficulty, setSelectedDifficulty] = useState("All Difficulties")
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [topics, setTopics] = useState<Topics>([]);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/topics")
+      .then((res) => res.json())
+      .then((tpcs) => setTopics(tpcs));
+
+    fetch("http://localhost:3000/questions")
+      .then((res) => res.json())
+      .then((qts) => setQuestions(qts));
+  }, []);
 
   const filteredQuestions = questions.filter((question) => {
-    const matchesSearch = question.question.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === "All Categories" || question.category === selectedCategory
-    const matchesDifficulty = selectedDifficulty === "All Difficulties" || question.difficulty === selectedDifficulty
-    return matchesSearch && matchesCategory && matchesDifficulty
-  })
+    const matchesSearch = question.text
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "All Categories" ||
+      question.topics.name === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
-  const handleDeleteQuestion = (id: string) => {
-    setQuestions(questions.filter((q) => q.id !== id))
-  }
+  const handleDeleteQuestion = (id: number) => {
+    setQuestions(questions.filter((q) => q.id !== id));
+  };
 
-  const handleAddQuestion = (newQuestion: Omit<Question, "id" | "createdAt">) => {
-    const question: Question = {
-      ...newQuestion,
-      id: (questions.length + 1).toString(),
-      createdAt: new Date().toISOString().split("T")[0],
-    }
-    setQuestions([question, ...questions])
-    setIsAddDialogOpen(false)
-  }
+  const handleAddQuestion = (newQuestion: Partial<Question>) => {
+    // to do add question endpoint
+    setQuestions([...questions]);
+    setIsAddDialogOpen(false);
+  };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case "easy":
-        return "bg-green-100 text-green-800 hover:bg-green-100"
+        return "bg-green-100 text-green-800 hover:bg-green-100";
       case "medium":
-        return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
+        return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100";
       case "hard":
-        return "bg-red-100 text-red-800 hover:bg-red-100"
+        return "bg-red-100 text-red-800 hover:bg-red-100";
       default:
-        return "bg-gray-100 text-gray-800 hover:bg-gray-100"
+        return "bg-gray-100 text-gray-800 hover:bg-gray-100";
     }
-  }
+  };
 
-  const getTypeColor = (type: string) => {
-    return type === "multiple-choice"
+  const getTypeColor = (hasOptions: boolean) => {
+    return hasOptions
       ? "bg-blue-100 text-blue-800 hover:bg-blue-100"
-      : "bg-purple-100 text-purple-800 hover:bg-purple-100"
-  }
+      : "bg-purple-100 text-purple-800 hover:bg-purple-100";
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-balance">Questions Management</h1>
+          <h1 className="text-3xl font-bold text-balance">
+            Questions Management
+          </h1>
           <p className="text-muted-foreground">Manage your question database</p>
         </div>
         <Button className="gap-2" onClick={() => setIsAddDialogOpen(true)}>
@@ -156,26 +131,17 @@ export function QuestionManagement() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <Select
+                value={selectedCategory}
+                onValueChange={setSelectedCategory}
+              >
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Select difficulty" />
-                </SelectTrigger>
-                <SelectContent>
-                  {difficulties.map((difficulty) => (
-                    <SelectItem key={difficulty} value={difficulty}>
-                      {difficulty}
+                  {topics.map((topic) => (
+                    <SelectItem key={topic.id} value={topic.name}>
+                      {topic.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -208,29 +174,30 @@ export function QuestionManagement() {
                 {filteredQuestions.map((question) => (
                   <TableRow key={question.id}>
                     <TableCell className="max-w-md">
-                      <div className="truncate" title={question.question}>
-                        {question.question}
+                      <div className="truncate" title={question.text}>
+                        {question.text}
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="secondary" className={getTypeColor(question.type)}>
-                        {question.type === "multiple-choice" ? "Multiple Choice" : "Single Answer"}
+                      <Badge
+                        variant="secondary"
+                        className={getTypeColor(question.hasOptions)}
+                      >
+                        {question.hasOptions
+                          ? "Multiple Choice"
+                          : "Single Answer"}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline">{question.category}</Badge>
+                      <Badge variant="outline">{question.topics.name}</Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="secondary" className={getDifficultyColor(question.difficulty)}>
-                        {question.difficulty}
-                      </Badge>
+                      {question.hasOptions
+                        ? question.options.find((option) => option.isCorrect)
+                            ?.text
+                        : question.answer}
                     </TableCell>
-                    <TableCell>
-                      {question.type === "multiple-choice" && question.answers
-                        ? question.answers[question.correctAnswer as number]
-                        : question.correctAnswer}
-                    </TableCell>
-                    <TableCell>{question.createdAt}</TableCell>
+                    <TableCell>{question.created_at}</TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -262,7 +229,12 @@ export function QuestionManagement() {
       </Card>
 
       {/* Add Question Dialog */}
-      <AddQuestionDialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen} onAddQuestion={handleAddQuestion} />
+      <AddQuestionDialog
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        onAddQuestion={handleAddQuestion}
+        topics={topics}
+      />
     </div>
-  )
+  );
 }

@@ -1,11 +1,12 @@
 import { config } from "dotenv";
-import { initializeBot } from "./bot.js";
+import initializeBot from "./bot.js";
 import express from "express";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import topicsRouter from "./controllers/topics/topics.js";
 import questionsRouter from "./controllers/questions/questions.js";
 import openapiDoc from "./docs/swagger.js";
+import getStatistics from "./controllers/statistics/statistics.js";
 
 config(); //include dotenv library to use var - env and read this file
 
@@ -19,12 +20,14 @@ app.use("/topics", topicsRouter);
 
 app.use("/questions", questionsRouter);
 
+app.get("/statistics", getStatistics);
+
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiDoc));
 
 // Health
 app.get("/", (_req, res) => res.json({ ok: true, message: "API running" }));
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`API on http://localhost:${process.env.PORT || 3000}`);
+app.listen(PORT, () => {
+  console.log(`API on http://localhost:${PORT}`);
   initializeBot();
 });

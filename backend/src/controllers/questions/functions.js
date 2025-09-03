@@ -8,10 +8,11 @@ import supabase from "../../supabaseClient.js";
 export async function getAllQuestions(req, res) {
   const { data, error } = await supabase
     .from("questions")
-    .select("*")
+    .select("*,topics(id,name)")
     .order("id", { ascending: true });
 
   if (error) {
+    console.log(error);
     return res.status(500).json({ error: "Failed to fetch questions" });
   }
 

@@ -11,7 +11,7 @@ import {
 
 const bot = new Bot(process.env.BOT_API_KEY); //create a new bot with the API key from .env file
 
-export async function initializeBot() {
+export default async function initializeBot() {
   //what is the difference between startBot here and down and why index4.js is almost empty, why all info is here now??
   const topicsWithQuestions = await fetchTopicsWithQuestions(); //fetch topics with questions from the database
   const topicNames = topicsWithQuestions.map((topic) => topic.name);
