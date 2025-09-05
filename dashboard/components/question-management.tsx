@@ -40,7 +40,7 @@ export interface Question {
 }
 
 type Topics = { id: number; name: string }[];
-
+//useState is for 
 export function QuestionManagement() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
