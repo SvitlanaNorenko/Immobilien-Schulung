@@ -4,6 +4,7 @@ import {
   deleteQuestion,
   getAllQuestions,
   getQuestionById,
+  updateQuestionById,
 } from "./functions.js";
 
 const questionsRouter = Router();
@@ -11,6 +12,8 @@ const questionsRouter = Router();
 questionsRouter.get("/", getAllQuestions);
 
 questionsRouter.get("/:id", getQuestionById);
+
+questionsRouter.post("/:id", updateQuestionById);
 
 questionsRouter.post("/", createQuestion);
 

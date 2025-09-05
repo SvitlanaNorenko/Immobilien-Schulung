@@ -54,15 +54,23 @@ export async function getQuestionById(req, res) {
  * Body: { text: string, answer: string, options: string[] }
  */
 export async function createQuestion(req, res) {
-  const { text, answer, options } = req.body;
+  const { text, answer, options, hasOptions, topic_id } = req.body || {};
 
   if (!text || typeof text !== "string" || !text.trim()) {
     return res.status(400).json({ error: "Question 'text' is required" });
   }
-  if (!answer || typeof answer !== "string" || !answer.trim()) {
+
+  if (!topic_id || typeof topic_id !== "number") {
+    return res.status(400).json({ error: "Question 'topic_id' is required" });
+  }
+
+  if (
+    !hasOptions &&
+    (!answer || typeof answer !== "string" || !answer.trim())
+  ) {
     return res.status(400).json({ error: "Question 'answer' is required" });
   }
-  if (!Array.isArray(options) || options.length < 2) {
+  if (hasOptions && (!Array.isArray(options) || options.length < 2)) {
     return res
       .status(400)
       .json({ error: "'options' must be an array with at least two items" });
@@ -70,13 +78,28 @@ export async function createQuestion(req, res) {
 
   const { data, error } = await supabase
     .from("questions")
-    .insert({ text: text.trim(), answer: answer.trim(), options })
+    .insert({
+      text: text.trim(),
+      answer: answer.trim(),
+      options,
+      hasOptions,
+      topic_id,
+    })
     .select()
     .single();
 
   if (error) {
+    console.log(error);
     return res.status(500).json({ error: "Failed to create question" });
   }
+
+  const { data: topic } = await supabase
+    .from("topics")
+    .select("*")
+    .eq("id", topic_id)
+    .single();
+
+  data.topics = topic;
 
   res.status(201).json(data);
 }
@@ -108,3 +131,10 @@ export async function deleteQuestion(req, res) {
 
   res.json({ deleted: true, question: data });
 }
+
+// home work
+// It should update the question based on the question id and data
+// it's a bit semilar to createQuestion, you jsut need to update the question instead of creating it. Use the id to update teh correct question
+// the id will be passed in   const id = req.params.id;
+
+export async function updateQuestionById(req, res) {}

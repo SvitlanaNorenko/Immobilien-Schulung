@@ -28,8 +28,9 @@ import {
 } from "@/components/ui/select";
 import { Edit, MoreHorizontal, Plus, Search, Trash2 } from "lucide-react";
 import { AddQuestionDialog } from "@/components/add-question-dialog";
+import { API_URL } from "@/lib/constants";
 
-export interface Question {
+export interface QuestionResponse {
   id: number;
   created_at: string;
   text: string;
@@ -39,14 +40,24 @@ export interface Question {
   options: { text: string; isCorrect: boolean }[];
 }
 
+export type QuestionRequest = Omit<
+  QuestionResponse,
+  "topics" | "id" | "created_at"
+> & {
+  topic_id: number;
+};
+
 type Topics = { id: number; name: string }[];
-//useState is for 
+//useState is for
 export function QuestionManagement() {
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<QuestionResponse[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [topics, setTopics] = useState<Topics>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [defaultFormValue, setDefaultFormValue] =
+    useState<QuestionRequest | null>(null);
 
   useEffect(() => {
     fetch("http://localhost:3000/topics")
@@ -57,6 +68,10 @@ export function QuestionManagement() {
       .then((res) => res.json())
       .then((qts) => setQuestions(qts));
   }, []);
+
+  if (!topics.length || !questions.length) {
+    return <div>Loading...</div>;
+  }
 
   const filteredQuestions = questions.filter((question) => {
     const matchesSearch = question.text
@@ -69,26 +84,34 @@ export function QuestionManagement() {
   });
 
   const handleDeleteQuestion = (id: number) => {
+    fetch(API_URL + "/questions/" + id, { method: "DELETE" });
     setQuestions(questions.filter((q) => q.id !== id));
   };
 
-  const handleAddQuestion = (newQuestion: Partial<Question>) => {
-    // to do add question endpoint
-    setQuestions([...questions]);
+  const handleAddQuestion = async (newQuestion: QuestionRequest) => {
     setIsAddDialogOpen(false);
+    setDefaultFormValue(null);
+
+    const response = await fetch(API_URL + "/questions", {
+      method: "POST",
+      body: JSON.stringify(newQuestion),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      const addedQuestion = await response.json();
+      setQuestions([...questions, addedQuestion]);
+    }
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case "easy":
-        return "bg-green-100 text-green-800 hover:bg-green-100";
-      case "medium":
-        return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100";
-      case "hard":
-        return "bg-red-100 text-red-800 hover:bg-red-100";
-      default:
-        return "bg-gray-100 text-gray-800 hover:bg-gray-100";
-    }
+  // Homework
+  const handleEditQuestion = async (
+    question: QuestionRequest & { id: number }
+  ) => {
+    // question.id is defined here and you should use it to update this specific question information
+    // You need to write the function "updateQuestionById" in backend/src/controllers/questions/functions.js
   };
 
   const getTypeColor = (hasOptions: boolean) => {
@@ -96,6 +119,8 @@ export function QuestionManagement() {
       ? "bg-blue-100 text-blue-800 hover:bg-blue-100"
       : "bg-purple-100 text-purple-800 hover:bg-purple-100";
   };
+
+  const safeFirstTopicId = topics?.[0]?.id ?? undefined;
 
   return (
     <div className="space-y-6">
@@ -106,7 +131,20 @@ export function QuestionManagement() {
           </h1>
           <p className="text-muted-foreground">Manage your question database</p>
         </div>
-        <Button className="gap-2" onClick={() => setIsAddDialogOpen(true)}>
+        <Button
+          className="gap-2"
+          onClick={() => {
+            setIsAddDialogOpen(true);
+            setIsEdit(false);
+            setDefaultFormValue({
+              text: "",
+              hasOptions: true,
+              topic_id: safeFirstTopicId,
+              options: [],
+              answer: "",
+            });
+          }}
+        >
           <Plus className="h-4 w-4" />
           Add Question
         </Button>
@@ -164,7 +202,6 @@ export function QuestionManagement() {
                   <TableHead>Question</TableHead>
                   <TableHead>Type</TableHead>
                   <TableHead>Category</TableHead>
-                  <TableHead>Difficulty</TableHead>
                   <TableHead>Correct Answer</TableHead>
                   <TableHead>Created</TableHead>
                   <TableHead className="w-[70px]">Actions</TableHead>
@@ -206,7 +243,17 @@ export function QuestionManagement() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setDefaultFormValue({
+                                ...question,
+                                topic_id: question.topics.id,
+                              });
+
+                              setIsAddDialogOpen(true);
+                              setIsEdit(true);
+                            }}
+                          >
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
@@ -229,12 +276,20 @@ export function QuestionManagement() {
       </Card>
 
       {/* Add Question Dialog */}
-      <AddQuestionDialog
-        open={isAddDialogOpen}
-        onOpenChange={setIsAddDialogOpen}
-        onAddQuestion={handleAddQuestion}
-        topics={topics}
-      />
+      {defaultFormValue && (
+        <AddQuestionDialog
+          open={isAddDialogOpen}
+          onOpenChange={(isOpen) => {
+            setIsAddDialogOpen(isOpen);
+            setDefaultFormValue(null);
+          }}
+          onAddQuestion={handleAddQuestion}
+          onEditQuestion={handleEditQuestion}
+          topics={topics}
+          defaultFormValue={defaultFormValue}
+          isEdit={isEdit}
+        />
+      )}
     </div>
   );
 }
