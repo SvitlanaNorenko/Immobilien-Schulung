@@ -203,41 +203,6 @@ export {
   getQuestionAnswer,
 }; //need to export function to use it in index.js
 
-const question = {
-  id: 1,
-  hasOptions: true,
-  answer: null,
-  options: [
-    {
-      text: "Die kaufmännische Verwaltung organisiert Versicherungen für die Immobilie, z.B. die Wohngebäudeversicherung.",
-      isCorrect: true,
-    },
-    {
-      text: "Wenn ein Mieter nicht zahlt, muss der technische Verwalter Mahnungen schreiben.",
-      isCorrect: false,
-    },
-    {
-      text: "Ein Instandhaltungsrücklagenkonto darf auch für Reparaturen im Garten genutzt werden.",
-      isCorrect: true,
-    },
-  ],
-};
 
-const answers = [
-  {
-    text: "Die kaufmännische Verwaltung organisiert Versicherungen für die Immobilie, z.B. die Wohngebäudeversicherung.",
-    isCorrect: true,
-  },
-  {
-    text: "Wenn ein Mieter nicht zahlt, muss der technische Verwalter Mahnungen schreiben.",
-    isCorrect: false,
-  },
-  {
-    text: "Ein Instandhaltungsrücklagenkonto darf auch für Reparaturen im Garten genutzt werden.",
-    isCorrect: true,
-  },
-];
 
-answers.find((value) => {
-  return value.isCorrect;
-});
+

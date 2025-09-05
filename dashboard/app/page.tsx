@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { isAuthenticated } from "@/lib/auth"
 
 export default function HomePage() {
+  //use router to move between pages
   const router = useRouter()
 
   useEffect(() => {

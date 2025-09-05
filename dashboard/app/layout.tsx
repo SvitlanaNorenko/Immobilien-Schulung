@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import './globals.css'
-
+//the main file that load itself when start the app
 export const metadata: Metadata = {
   title: 'v0 App',
   description: 'Created with v0',

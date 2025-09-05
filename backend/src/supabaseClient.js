@@ -1,3 +1,4 @@
+//to conect with supabase
 import { config } from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 
