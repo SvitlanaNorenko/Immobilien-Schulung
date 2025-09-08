@@ -90,7 +90,6 @@ export function QuestionManagement() {
 
   const handleAddQuestion = async (newQuestion: QuestionRequest) => {
     setIsAddDialogOpen(false);
-    setDefaultFormValue(null);
 
     const response = await fetch(API_URL + "/questions", {
       method: "POST",
@@ -110,8 +109,30 @@ export function QuestionManagement() {
   const handleEditQuestion = async (
     question: QuestionRequest & { id: number }
   ) => {
-    // question.id is defined here and you should use it to update this specific question information
-    // You need to write the function "updateQuestionById" in backend/src/controllers/questions/functions.js
+    setIsAddDialogOpen(false);
+
+    const response = await fetch(API_URL + "/questions/" + question.id, {
+      method: "PATCH",
+      body: JSON.stringify(question),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const updatedQuestion = data.question;
+
+      const newQuestions = questions.map((q) => {
+        if (q.id === question.id) {
+          return updatedQuestion;
+        }
+
+        return q;
+      });
+
+      setQuestions(newQuestions);
+    }
   };
 
   const getTypeColor = (hasOptions: boolean) => {

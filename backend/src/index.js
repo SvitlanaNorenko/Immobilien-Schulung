@@ -28,6 +28,13 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiDoc));
 app.get("/", (_req, res) => res.json({ ok: true, message: "API running" }));
 
 app.listen(PORT, () => {
-  console.log(`API on http://localhost:${PORT}`);
-  initializeBot();
+  console.log(`AP
+    I on http://localhost:${PORT}`);
 });
+
+let initialized = false;
+
+if (!initialized) {
+  initializeBot();
+  initialized = true;
+}

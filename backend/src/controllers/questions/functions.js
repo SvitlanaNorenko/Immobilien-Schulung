@@ -137,4 +137,52 @@ export async function deleteQuestion(req, res) {
 // it's a bit semilar to createQuestion, you jsut need to update the question instead of creating it. Use the id to update teh correct question
 // the id will be passed in   const id = req.params.id;
 
-export async function updateQuestionById(req, res) {}
+export async function updateQuestionById(req, res) {
+  const { id, hasOptions, topic_id, answer, options, text } = req.body || {}; //to be sure that it works without info inside
+
+  if (!id || typeof id !== "number") {
+    res.status(400).json({ error: "id is required" });
+    return;
+  }
+
+  if (!hasOptions || typeof hasOptions !== "boolean") {
+    res.status(400).json({ error: "hasOptions are required" });
+    return;
+  }
+
+  if (!topic_id || typeof topic_id !== "number") {
+    res.status(400).json({ error: "topic_id is required" });
+    return;
+  }
+
+  if (hasOptions) {
+    if (!options || !Array.isArray(options)) {
+      res.status(400).json({ error: "options is required" });
+      return;
+    }
+  } else {
+    if (!answer || typeof answer !== "string") {
+      res.status(400).json({ error: "answer is required" });
+      return;
+    }
+  }
+
+  if (!text || typeof text !== "string") {
+    res.status(400).json({ error: "text is required" });
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("questions")
+    .update({ hasOptions, topic_id, answer, options, text })
+    .eq("id", id)
+    .select() //which field to give back
+    .single(); //only 1 question, not the whole arr
+
+  if (error) {
+    res.status(500).end();
+    return;
+  }
+
+  res.status(200).json({ updated: true, question: data });
+}

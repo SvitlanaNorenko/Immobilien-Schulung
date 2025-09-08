@@ -15,6 +15,8 @@ questionsRouter.get("/:id", getQuestionById);
 
 questionsRouter.post("/:id", updateQuestionById);
 
+questionsRouter.patch("/:id", updateQuestionById);
+
 questionsRouter.post("/", createQuestion);
 
 questionsRouter.delete("/:id", deleteQuestion);
