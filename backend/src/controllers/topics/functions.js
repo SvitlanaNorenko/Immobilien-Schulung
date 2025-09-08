@@ -41,6 +41,9 @@ export async function createTopic(req, res) {
   res.status(201).json(data);
 }
 
+// Home work
+export async function updateTopic(req, res) {}
+
 /**
  * DELETE /topics/:id
  * Path param only (no query fallback)

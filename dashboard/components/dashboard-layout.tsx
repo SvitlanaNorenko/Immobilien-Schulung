@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,14 +13,24 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { BarChart3, FileQuestion, FolderOpen, LogOut, Menu, Settings, Shield, User, Users } from "lucide-react"
-import { getUserEmail, logout } from "@/lib/auth"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  BarChart3,
+  FileQuestion,
+  FolderOpen,
+  LogOut,
+  Menu,
+  Settings,
+  Shield,
+  User,
+  Users,
+} from "lucide-react";
+import { getUserEmail, logout } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 
 interface DashboardLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 const navigation = [
@@ -29,17 +39,17 @@ const navigation = [
   { name: "Categories", href: "/dashboard/categories", icon: FolderOpen },
   { name: "Users", href: "/dashboard/users", icon: Users },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
-]
+];
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const router = useRouter()
-  const userEmail = getUserEmail()
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const router = useRouter();
+  const userEmail = getUserEmail();
 
   const handleLogout = () => {
-    logout()
-    router.push("/login")
-  }
+    logout();
+    router.push("/login");
+  };
 
   const Sidebar = ({ className }: { className?: string }) => (
     <div className={cn("flex h-full flex-col bg-sidebar", className)}>
@@ -49,32 +59,34 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="p-2 bg-sidebar-primary rounded-lg">
             <Shield className="h-5 w-5 text-sidebar-primary-foreground" />
           </div>
-          <span className="text-lg font-bold text-sidebar-foreground">Admin Panel</span>
+          <span className="text-lg font-bold text-sidebar-foreground">
+            Admin Panel
+          </span>
         </div>
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 p-4">
         {navigation.map((item) => {
-          const Icon = item.icon
+          const Icon = item.icon;
           return (
             <Button
               key={item.name}
               variant="ghost"
               className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               onClick={() => {
-                router.push(item.href)
-                setSidebarOpen(false)
+                router.push(item.href);
+                setSidebarOpen(false);
               }}
             >
               <Icon className="h-4 w-4" />
               {item.name}
             </Button>
-          )
+          );
         })}
       </nav>
     </div>
-  )
+  );
 
   return (
     <div className="flex h-screen bg-background">
@@ -119,17 +131,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">Admin User</p>
-                  <p className="text-xs leading-none text-muted-foreground">{userEmail}</p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {userEmail}
+                  </p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
                 <span>Profile</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>
@@ -144,5 +154,5 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>
     </div>
-  )
+  );
 }

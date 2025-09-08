@@ -9,6 +9,9 @@ topicsRouter.get("/", getTopics);
 // POST create a Topic
 topicsRouter.post("/", createTopic);
 
+// PATCH create a Topic
+topicsRouter.patch("/:id", updateTopic);
+
 // DELETE remove a Topic
 topicsRouter.delete("/:id", deleteTopic);
 
