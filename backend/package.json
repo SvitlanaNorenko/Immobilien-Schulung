@@ -16,6 +16,7 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "grammy": "^1.36.3",
+    "jszip": "^3.10.1",
     "nodemon": "^3.1.10",
     "swagger-ui-express": "^5.0.1",
     "yaml": "^2.8.1"

@@ -7,6 +7,8 @@ import topicsRouter from "./controllers/topics/topics.js";
 import questionsRouter from "./controllers/questions/questions.js";
 import openapiDoc from "./docs/swagger.js";
 import getStatistics from "./controllers/statistics/statistics.js";
+import getUsers from "./controllers/getUsers.js";
+import exportCSV from "./controllers/exportCSV.js";
 
 config(); //include dotenv library to use var - env and read this file
 
@@ -21,6 +23,10 @@ app.use("/topics", topicsRouter);
 app.use("/questions", questionsRouter);
 
 app.get("/statistics", getStatistics);
+
+app.get("/exportData", exportCSV);
+
+app.get("/users", getUsers);
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapiDoc));
 
