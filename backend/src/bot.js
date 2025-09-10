@@ -7,6 +7,7 @@ import {
   fetchTopicsWithQuestions,
   saveAnswer,
   getQuestionAnswer,
+  getRandomTopic,
 } from "./utils.js"; //to import the functions
 
 const bot = new Bot(process.env.BOT_API_KEY); //create a new bot with the API key from .env file
@@ -15,13 +16,14 @@ export default async function initializeBot() {
   //what is the difference between startBot here and down and why index4.js is almost empty, why all info is here now??
   const topicsWithQuestions = await fetchTopicsWithQuestions(); //fetch topics with questions from the database
   const topicNames = topicsWithQuestions.map((topic) => topic.name);
+  const keyboardOptions = [...topicNames, "Random"];
 
   //bot.command - to process the command /start
   //ctx - context, contains information about the message, user, chat, etc.
   bot.command("start", async (ctx) => {
     const startKeyboard = new Keyboard();
 
-    topicNames.forEach((topic, index) => {
+    keyboardOptions.forEach((topic, index) => {
       startKeyboard.text(topic);
       if (index % 2) {
         startKeyboard.row();
@@ -43,9 +45,13 @@ export default async function initializeBot() {
   });
   //bot.hears - to react to the questions with specific text, events
   //processing topic selection
-  bot.hears(topicNames, async (ctx) => {
+  bot.hears(keyboardOptions, async (ctx) => {
     const userId = ctx.from.id;
-    const topic = ctx.message.text;
+    const topic =
+      ctx.message.text === "Random"
+        ? getRandomTopic(topicNames)
+        : ctx.message.text;
+    console.log("TOPIC", topic);
     const nextQuestion = await getNextQuestion(userId, topic); //to the next question for the topic
 
     if (!nextQuestion) {

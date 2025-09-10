@@ -194,6 +194,10 @@ function getQuestionAnswer(question, optionId) {
   return { isCorrect: true, answer: question.answer };
 }
 
+function getRandomTopic(topics = []) {
+  const randomIndex = Math.floor(Math.random() * topics.length);
+  return topics[randomIndex];
+}
 export {
   getQuestionById,
   fetchTopicsWithQuestions,
@@ -201,8 +205,5 @@ export {
   createUser,
   saveAnswer,
   getQuestionAnswer,
+  getRandomTopic,
 }; //need to export function to use it in index.js
-
-
-
-
