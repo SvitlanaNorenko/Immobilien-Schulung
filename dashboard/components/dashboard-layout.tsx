@@ -21,7 +21,6 @@ import {
   FolderOpen,
   LogOut,
   Menu,
-  Settings,
   Shield,
   User,
   Users,
@@ -38,7 +37,6 @@ const navigation = [
   { name: "Questions", href: "/dashboard/questions", icon: FileQuestion },
   { name: "Categories", href: "/dashboard/categories", icon: FolderOpen },
   { name: "Users", href: "/dashboard/users", icon: Users },
-  { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
