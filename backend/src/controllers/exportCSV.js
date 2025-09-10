@@ -47,9 +47,8 @@ export default async function exportUsersDataAsCSV(req, res) {
 
   const zipBuffer = await zip.generateAsync({ type: "nodebuffer" });
 
-  // Send zip
-  res.setHeader("Content-Disposition", 'attachment; filename="export.zip"');
-  res.setHeader("Content-Type", "application/zip");
+  res.setHeader("Content-Disposition", 'attachment; filename="export.csv"');
+  res.setHeader("Content-Type", "text/csv; charset=utf-8");
   res.send(zipBuffer);
 }
 
