@@ -198,6 +198,7 @@ function getRandomTopic(topics = []) {
   const randomIndex = Math.floor(Math.random() * topics.length);
   return topics[randomIndex];
 }
+
 export {
   getQuestionById,
   fetchTopicsWithQuestions,
