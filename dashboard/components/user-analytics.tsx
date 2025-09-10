@@ -263,7 +263,7 @@ async function downloadUsersData() {
     // Create a temporary <a> to trigger download
     const a = document.createElement("a");
     a.href = url;
-    a.download = "export.zip";
+    a.download = "export.pdf";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
