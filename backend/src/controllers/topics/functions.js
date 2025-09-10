@@ -41,8 +41,24 @@ export async function createTopic(req, res) {
   res.status(201).json(data);
 }
 
-// Home work
-export async function updateTopic(req, res) {}
+export async function updateTopic(req, res) {
+  const id = Number(req.params.id);
+  const name = typeof req.body?.name === "string" ? req.body.name.trim() : "";
+  if (!name) return res.status(400).json({ error: "Topic 'name' is required" });
+
+  const { data, error } = await supabase
+    .from("topics")
+    .update({ name })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    return res.status(500).json({ error: "Failed to update the topic" });
+  }
+
+  res.json(data);
+}
 
 /**
  * DELETE /topics/:id

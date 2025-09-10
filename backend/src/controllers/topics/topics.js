@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createTopic, deleteTopic, getTopics } from "./functions.js";
+import { createTopic, deleteTopic, getTopics, updateTopic } from "./functions.js";
 
 const topicsRouter = Router();
 
@@ -9,7 +9,7 @@ topicsRouter.get("/", getTopics);
 // POST create a Topic
 topicsRouter.post("/", createTopic);
 
-// PATCH create a Topic
+// PATCH update a Topic
 topicsRouter.patch("/:id", updateTopic);
 
 // DELETE remove a Topic

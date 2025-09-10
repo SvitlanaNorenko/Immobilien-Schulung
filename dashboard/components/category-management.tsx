@@ -82,11 +82,29 @@ export function CategoryManagement() {
     }
   };
 
-  const handleEditCategory = () => {
+  const handleEditCategory = async () => {
+    const bodyRequest = {
+      name: editingCategory?.name,
+    };
+
+    const response = await fetch(API_URL + "/topics/" + editingCategory?.id, {
+      //request to the backend to update the categorie
+      method: "PATCH",
+      body: JSON.stringify(bodyRequest),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      const topic = await response.json(); // the updated topic
+      const index = categories.findIndex((element) => element.id === topic.id); //getting the index of the changed topic
+      categories[index] = topic; //replace the old topic with the new one
+      setCategories([...categories]); //kopie for React
+    }
+
     setEditingCategory(null);
     setIsEditDialogOpen(false);
-
-    // Homework: Create the request to update the category name
   };
 
   const handleDeleteCategory = (id: string) => {

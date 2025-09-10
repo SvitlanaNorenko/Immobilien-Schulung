@@ -38,7 +38,7 @@ export async function getQuestionById(req, res) {
     .single();
 
   if (error) {
-    // If we don't fidn the question
+    // If we don't find the question
     if (error.code === "PGRST116") {
       return res.status(404).json({ error: "Question not found" });
     }
@@ -134,11 +134,11 @@ export async function deleteQuestion(req, res) {
 
 // home work
 // It should update the question based on the question id and data
-// it's a bit semilar to createQuestion, you jsut need to update the question instead of creating it. Use the id to update teh correct question
+// it's a bit similar to createQuestion, you just need to update the question instead of creating it. Use the id to update then correct question
 // the id will be passed in   const id = req.params.id;
 
 export async function updateQuestionById(req, res) {
-  const { id, hasOptions, topic_id, answer, options, text } = req.body || {}; //to be sure that it works without info inside
+  const { id, hasOptions, topic_id, answer, options, text } = req.body || {}; //{} - to be sure that it works without info inside
 
   if (!id || typeof id !== "number") {
     res.status(400).json({ error: "id is required" });
