@@ -6,7 +6,8 @@ async function createUser(telegramId, name) {
     .insert({ telegram_id: telegramId, name });
 
   if (error.code === "23505") {
-    await supabase.from("users").update({ name }).eq("telegram_id", telegramId);
+    await supabase.from("users").delete({ name }).eq("telegram_id", telegramId);
+    await supabase.from("users").insert({ telegram_id: telegramId, name });
     return;
   }
 
