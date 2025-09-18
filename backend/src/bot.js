@@ -51,7 +51,7 @@ export default async function initializeBot() {
       ctx.message.text === "Random"
         ? getRandomTopic(topicNames)
         : ctx.message.text;
-    console.log("TOPIC", topic);
+
     const nextQuestion = await getNextQuestion(userId, topic); //to the next question for the topic
 
     if (!nextQuestion) {

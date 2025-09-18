@@ -8,7 +8,7 @@ import questionsRouter from "./controllers/questions/questions.js";
 import openapiDoc from "./docs/swagger.js";
 import getStatistics from "./controllers/statistics/statistics.js";
 import getUsers from "./controllers/getUsers.js";
-import exportCSV from "./controllers/exportCSV.js";
+import exportPDF from "./controllers/exportPDF.js";
 
 config(); //include dotenv library to use var - env and read this file
 
@@ -24,7 +24,7 @@ app.use("/questions", questionsRouter);
 
 app.get("/statistics", getStatistics);
 
-app.get("/exportData", exportCSV);
+app.get("/exportData", exportPDF);
 
 app.get("/users", getUsers);
 

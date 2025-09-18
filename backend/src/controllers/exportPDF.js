@@ -1,7 +1,7 @@
 import supabase from "../supabaseClient.js";
 import puppeteer from "puppeteer";
 
-export default async function exportUsersDataAsCSV(req, res) {
+export default async function exportUsersDataAsPDF(req, res) {
   const { data, error } = await supabase
     .from("users")
     .select("*, answers(*, questions(*,topics(*)))");
@@ -62,39 +62,6 @@ export default async function exportUsersDataAsCSV(req, res) {
   res.setHeader("Content-Type", "application/pdf");
   res.setHeader("Content-Disposition", 'attachment; filename="export.pdf"');
   res.send(pdfBuffer);
-}
-
-/**
- * Minimal CSV serializer:
- * - Unions keys across all rows to form consistent headers
- * - Escapes quotes, commas, and newlines
- * - Adds UTF-8 BOM for Excel
- */
-function arrayToCSV(rows) {
-  if (!Array.isArray(rows) || rows.length === 0) {
-    // Return an empty CSV with no rows (or you can return '' if you prefer)
-    return "\uFEFF";
-  }
-
-  // Union of keys to keep all columns
-  const headerSet = new Set();
-  for (const r of rows) Object.keys(r ?? {}).forEach((k) => headerSet.add(k));
-  const headers = Array.from(headerSet);
-
-  const escape = (val) => {
-    if (val === null || val === undefined) return "";
-    const s = String(val);
-    const needsWrap = /[",\n]/.test(s);
-    const escaped = s.replace(/"/g, '""');
-    return needsWrap ? `"${escaped}"` : escaped;
-  };
-
-  const headerRow = headers.map(escape).join(",");
-  const body = rows
-    .map((r) => headers.map((h) => escape(r?.[h])).join(","))
-    .join("\n");
-
-  return "\uFEFF" + headerRow + (body ? "\n" + body : "") + "\n";
 }
 
 function escapeHtml(s) {

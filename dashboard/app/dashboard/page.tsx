@@ -101,7 +101,7 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {statistics.completionPercentage}%
+                  {statistics.completionPercentage.toFixed(2)}%
                 </div>
               </CardContent>
             </Card>
